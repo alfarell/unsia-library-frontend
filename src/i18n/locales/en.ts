@@ -6,6 +6,7 @@ export const en = {
     changeLanguage: 'Change language',
     changeTheme: 'Change theme',
     close: 'Close',
+    userMenu: 'Open user menu',
   },
   theme: {
     dark: 'Dark',
@@ -71,6 +72,7 @@ export const en = {
     registerSuccess: 'Account created successfully',
     logout: 'Sign out',
     logoutSuccess: 'Signed out',
+    userFallback: 'User',
     noAccount: "Don't have an account?",
     haveAccount: 'Already have an account?',
     goToRegister: 'Sign up now',

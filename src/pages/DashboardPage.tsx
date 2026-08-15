@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { Moon, Sun } from 'lucide-react'
 import { LoanStatusChart } from '../components/dashboard/LoanStatusChart'
 import { MetricCard } from '../components/dashboard/MetricCard'
-import { useAuth } from '../contexts/AuthContext'
-import { useToast } from '../contexts/ToastContext'
+import { UserMenu } from '../components/ui/UserMenu'
 import { useTheme } from '../hooks/useTheme'
 
 const navigationItems = ['dashboard', 'books', 'members', 'loans'] as const
@@ -11,18 +10,9 @@ const navigationItems = ['dashboard', 'books', 'members', 'loans'] as const
 export function DashboardPage() {
   const { i18n, t } = useTranslation()
   const { theme, toggleTheme } = useTheme()
-  const { signOut } = useAuth()
-  const { showToast } = useToast()
-  const navigate = useNavigate()
 
   const changeLanguage = async () => {
     await i18n.changeLanguage(i18n.language === 'id' ? 'en' : 'id')
-  }
-
-  const handleSignOut = () => {
-    signOut()
-    showToast(t('auth.logoutSuccess'), 'success')
-    navigate('/login')
   }
 
   return (
@@ -44,7 +34,7 @@ export function DashboardPage() {
             <button
               type="button"
               onClick={changeLanguage}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold transition hover:border-cyan-500 hover:text-cyan-700 dark:border-slate-700 dark:hover:border-cyan-400 dark:hover:text-cyan-300"
+              className="rounded-[4px] border border-slate-200 px-3 py-2 text-sm font-semibold transition hover:border-cyan-500 hover:text-cyan-700 dark:border-slate-700 dark:hover:border-cyan-400 dark:hover:text-cyan-300"
               aria-label={t('actions.changeLanguage')}
             >
               {i18n.language === 'id' ? 'EN' : 'ID'}
@@ -52,25 +42,22 @@ export function DashboardPage() {
             <button
               type="button"
               onClick={toggleTheme}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold transition hover:border-cyan-500 hover:text-cyan-700 dark:border-slate-700 dark:hover:border-cyan-400 dark:hover:text-cyan-300"
+              className="rounded-[4px] border border-slate-200 px-3 py-2 text-sm font-semibold transition hover:border-cyan-500 hover:text-cyan-700 dark:border-slate-700 dark:hover:border-cyan-400 dark:hover:text-cyan-300"
               aria-label={t('actions.changeTheme')}
             >
-              {theme === 'dark' ? t('theme.light') : t('theme.dark')}
+              {theme === 'dark' ? (
+                <Sun className="size-4" aria-hidden="true" />
+              ) : (
+                <Moon className="size-4" aria-hidden="true" />
+              )}
             </button>
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold transition hover:border-rose-500 hover:text-rose-700 dark:border-slate-700 dark:hover:border-rose-400 dark:hover:text-rose-300"
-              aria-label={t('auth.logout')}
-            >
-              {t('auth.logout')}
-            </button>
+            <UserMenu />
           </div>
         </div>
       </header>
 
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[220px_1fr] lg:px-8">
-        <aside className="min-w-0 rounded-3xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <aside className="min-w-0 border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <nav
             aria-label={t('navigation.label')}
             className="flex gap-2 overflow-x-auto lg:flex-col"
@@ -79,7 +66,7 @@ export function DashboardPage() {
               <button
                 key={item}
                 type="button"
-                className={`whitespace-nowrap rounded-2xl px-4 py-3 text-left text-sm font-semibold transition ${
+                className={`whitespace-nowrap rounded-[4px] px-4 py-3 text-left text-sm font-semibold transition ${
                   index === 0
                     ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/20'
                     : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
@@ -92,7 +79,7 @@ export function DashboardPage() {
         </aside>
 
         <main className="min-w-0">
-          <section className="mb-6 overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-700 via-cyan-600 to-teal-500 p-6 text-white shadow-xl shadow-cyan-900/10 sm:p-8">
+          <section className="mb-6 overflow-hidden bg-gradient-to-br from-cyan-700 via-cyan-600 to-teal-500 p-6 text-white shadow-xl shadow-cyan-900/10 sm:p-8">
             <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-100">
               {t('dashboard.eyebrow')}
             </p>
@@ -124,7 +111,7 @@ export function DashboardPage() {
           </section>
 
           <section className="mt-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-            <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <article className="border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <div className="mb-6">
                 <h2 className="text-xl font-bold tracking-tight">
                   {t('chart.title')}
@@ -136,7 +123,7 @@ export function DashboardPage() {
               <LoanStatusChart theme={theme} />
             </article>
 
-            <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <article className="border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <h2 className="text-xl font-bold tracking-tight">
                 {t('activity.title')}
               </h2>

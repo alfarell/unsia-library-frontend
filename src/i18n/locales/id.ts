@@ -6,6 +6,7 @@ export const id = {
     changeLanguage: 'Ganti bahasa',
     changeTheme: 'Ganti tema',
     close: 'Tutup',
+    userMenu: 'Buka menu pengguna',
   },
   theme: {
     dark: 'Gelap',
@@ -71,6 +72,7 @@ export const id = {
     registerSuccess: 'Akun berhasil dibuat',
     logout: 'Keluar',
     logoutSuccess: 'Berhasil keluar',
+    userFallback: 'Pengguna',
     noAccount: 'Belum punya akun?',
     haveAccount: 'Sudah punya akun?',
     goToRegister: 'Daftar sekarang',

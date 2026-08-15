@@ -56,4 +56,16 @@ describe('App', () => {
       }),
     ).toBeInTheDocument()
   })
+
+  it('keeps the theme toggle and opens the user menu from the avatar', async () => {
+    render(<App />)
+
+    expect(
+      await screen.findByRole('button', { name: 'Ganti tema' }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Buka menu pengguna' }))
+
+    expect(await screen.findByText('Test User')).toBeInTheDocument()
+  })
 })
