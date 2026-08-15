@@ -242,10 +242,13 @@ describe('apiRequest', () => {
             totalCopies: 3,
           },
         ],
+        borrowedAt: '2026-01-01T10:00:00.000Z',
         createdAt: '2026-01-01T00:00:00.000Z',
         createdBy: null,
+        durationDays: 7,
         id: '1',
         member: { id: '1', membershipCode: 'UNSIA00001', name: 'Budi Santoso' },
+        returnedAt: null,
         status: 'borrowed',
         updatedAt: '2026-01-01T00:00:00.000Z',
         updatedBy: null,
@@ -263,7 +266,7 @@ describe('apiRequest', () => {
     )
   })
 
-  it('creates a loan with memberId and bookIds', async () => {
+  it('creates a loan with memberId, bookIds, and durationDays', async () => {
     const loan = {
       books: [
         {
@@ -275,10 +278,13 @@ describe('apiRequest', () => {
           totalCopies: 3,
         },
       ],
+      borrowedAt: '2026-01-01T10:00:00.000Z',
       createdAt: '2026-01-01T00:00:00.000Z',
       createdBy: null,
+      durationDays: 7,
       id: '1',
       member: { id: '1', membershipCode: 'UNSIA00001', name: 'Budi Santoso' },
+      returnedAt: null,
       status: 'borrowed',
       updatedAt: '2026-01-01T00:00:00.000Z',
       updatedBy: null,
@@ -286,11 +292,15 @@ describe('apiRequest', () => {
     mockRequest.mockResolvedValue(response({ data: { loan } }, 201))
 
     await expect(
-      createLoan('token-123', { memberId: '1', bookIds: ['1', '2'] }),
+      createLoan('token-123', {
+        memberId: '1',
+        bookIds: ['1', '2'],
+        durationDays: 7,
+      }),
     ).resolves.toEqual({ loan })
     expect(mockRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: { memberId: '1', bookIds: ['1', '2'] },
+        data: { memberId: '1', bookIds: ['1', '2'], durationDays: 7 },
         method: 'POST',
         url: '/api/loans',
       }),
@@ -300,10 +310,13 @@ describe('apiRequest', () => {
   it('returns a loan via the return endpoint', async () => {
     const loan = {
       books: [],
+      borrowedAt: '2026-01-01T10:00:00.000Z',
       createdAt: '2026-01-01T00:00:00.000Z',
       createdBy: null,
+      durationDays: 7,
       id: '1',
       member: null,
+      returnedAt: '2026-01-08T16:00:00.000Z',
       status: 'returned',
       updatedAt: '2026-02-01T00:00:00.000Z',
       updatedBy: null,
@@ -335,7 +348,11 @@ describe('apiRequest', () => {
     })
 
     await expect(
-      createLoan('token-123', { memberId: '1', bookIds: ['1'] }),
+      createLoan('token-123', {
+        memberId: '1',
+        bookIds: ['1'],
+        durationDays: 7,
+      }),
     ).rejects.toMatchObject({
       code: 'BOOK_OUT_OF_STOCK',
       message: 'Stok buku tidak mencukupi',

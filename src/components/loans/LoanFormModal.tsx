@@ -15,6 +15,7 @@ type LoanFormModalProps = {
 
 type FormErrors = {
   books?: string
+  duration?: string
   member?: string
 }
 
@@ -26,6 +27,7 @@ export function LoanFormModal({ onClose, onSaved, open }: LoanFormModalProps) {
   const [books, setBooks] = useState<Book[]>([])
   const [memberId, setMemberId] = useState('')
   const [selectedBookIds, setSelectedBookIds] = useState<string[]>([])
+  const [durationDays, setDurationDays] = useState('7')
   const [loading, setLoading] = useState(true)
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -82,14 +84,27 @@ export function LoanFormModal({ onClose, onSaved, open }: LoanFormModalProps) {
       next.books = t('loans.form.validation.booksRequired')
     }
 
+    if (durationDays.trim() === '') {
+      next.duration = t('loans.form.validation.durationRequired')
+    } else {
+      const duration = Number(durationDays)
+      if (!Number.isInteger(duration) || duration < 1 || duration > 365) {
+        next.duration = t('loans.form.validation.durationInvalid')
+      }
+    }
+
     setErrors(next)
 
-    if (next.member || next.books) return
+    if (next.member || next.books || next.duration) return
 
     setIsSubmitting(true)
 
     try {
-      await createLoan(token, { bookIds: selectedBookIds, memberId })
+      await createLoan(token, {
+        bookIds: selectedBookIds,
+        durationDays: Number(durationDays),
+        memberId,
+      })
       onSaved()
     } catch (error) {
       showToast(
@@ -134,6 +149,35 @@ export function LoanFormModal({ onClose, onSaved, open }: LoanFormModalProps) {
               className="mt-1 text-xs font-medium text-rose-600 dark:text-rose-400"
             >
               {errors.member}
+            </p>
+          ) : null}
+        </div>
+
+        <div>
+          <label
+            htmlFor="loan-duration"
+            className="mb-1.5 block text-sm font-semibold"
+          >
+            {t('loans.form.durationDaysLabel')}
+          </label>
+          <input
+            id="loan-duration"
+            type="number"
+            min={1}
+            max={365}
+            step={1}
+            value={durationDays}
+            onChange={(event) => setDurationDays(event.target.value)}
+            placeholder={t('loans.form.durationDaysPlaceholder')}
+            aria-invalid={Boolean(errors.duration)}
+            className={inputClass}
+          />
+          {errors.duration ? (
+            <p
+              role="alert"
+              className="mt-1 text-xs font-medium text-rose-600 dark:text-rose-400"
+            >
+              {errors.duration}
             </p>
           ) : null}
         </div>

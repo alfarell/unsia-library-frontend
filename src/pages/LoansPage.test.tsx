@@ -50,6 +50,9 @@ const loans: api.Loan[] = [
       },
     ],
     status: 'borrowed',
+    durationDays: 7,
+    borrowedAt: '2026-01-01T10:00:00.000Z',
+    returnedAt: null,
     createdBy: { id: '9', name: 'Admin Satu' },
     updatedBy: { id: '9', name: 'Admin Satu' },
     createdAt: '2026-01-01T00:00:00.000Z',
@@ -69,6 +72,9 @@ const loans: api.Loan[] = [
       },
     ],
     status: 'returned',
+    durationDays: 14,
+    borrowedAt: '2026-06-01T08:00:00.000Z',
+    returnedAt: '2026-06-15T16:30:00.000Z',
     createdBy: null,
     updatedBy: null,
     createdAt: '2026-06-01T00:00:00.000Z',
@@ -258,6 +264,7 @@ describe('LoansPage', () => {
     expect(api.createLoan).toHaveBeenCalledWith('test-token', {
       memberId: '1',
       bookIds: ['1'],
+      durationDays: 7,
     })
     expect(
       await screen.findByText('Peminjaman berhasil dicatat'),
@@ -272,14 +279,39 @@ describe('LoansPage', () => {
     await screen.findByText('Belajar React +1 lainnya')
 
     await user.click(screen.getByRole('button', { name: 'Pinjam Buku' }))
+    const durationInput = await screen.findByLabelText('Durasi (hari)')
+    await user.clear(durationInput)
     await screen.findByRole('checkbox', { name: 'Belajar React' })
 
     await user.click(screen.getByRole('button', { name: 'Simpan' }))
 
     const alerts = await screen.findAllByRole('alert')
-    expect(alerts).toHaveLength(2)
+    expect(alerts).toHaveLength(3)
     expect(alerts[0]).toHaveTextContent('Pilih anggota')
-    expect(alerts[1]).toHaveTextContent('Pilih minimal satu buku')
+    expect(alerts[1]).toHaveTextContent('Masukkan durasi pinjam')
+    expect(alerts[2]).toHaveTextContent('Pilih minimal satu buku')
+    expect(api.createLoan).not.toHaveBeenCalled()
+  })
+
+  it('rejects invalid loan duration', async () => {
+    const user = userEvent.setup()
+
+    renderLoansPage()
+    await screen.findByText('Belajar React +1 lainnya')
+
+    await user.click(screen.getByRole('button', { name: 'Pinjam Buku' }))
+    await screen.findByLabelText('Anggota')
+
+    const durationInput = await screen.findByLabelText('Durasi (hari)')
+    await user.clear(durationInput)
+    await user.type(durationInput, '0')
+
+    await user.click(screen.getByRole('button', { name: 'Simpan' }))
+
+    const alerts = await screen.findAllByRole('alert')
+    expect(
+      alerts.some((a) => a.textContent?.includes('Durasi harus 1–365 hari')),
+    ).toBe(true)
     expect(api.createLoan).not.toHaveBeenCalled()
   })
 
@@ -330,6 +362,7 @@ describe('LoansPage', () => {
       within(dialog).getByText('Novel Senja — Penulis Dua — —'),
     ).toBeInTheDocument()
     expect(within(dialog).getByText('Dipinjam')).toBeInTheDocument()
+    expect(within(dialog).getByText('7 hari')).toBeInTheDocument()
     expect(within(dialog).getAllByText('Admin Satu')).toHaveLength(2)
     expect(within(dialog).getAllByText(/2026/).length).toBeGreaterThan(0)
   })

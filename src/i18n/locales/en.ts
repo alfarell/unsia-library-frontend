@@ -159,6 +159,8 @@ export const en = {
       createTitle: 'Borrow Book',
       memberLabel: 'Member',
       memberPlaceholder: 'Select member',
+      durationDaysLabel: 'Duration (days)',
+      durationDaysPlaceholder: 'e.g. 7',
       booksLabel: 'Select books',
       bookAvailable: '{{count}} of {{total}} available',
       save: 'Save',
@@ -166,6 +168,8 @@ export const en = {
       validation: {
         memberRequired: 'Select a member',
         booksRequired: 'Select at least one book',
+        durationRequired: 'Enter loan duration',
+        durationInvalid: 'Duration must be 1–365 days',
       },
     },
     return: {
@@ -181,6 +185,10 @@ export const en = {
       membershipCode: 'Member No.',
       books: 'Books',
       status: 'Status',
+      durationDaysLabel: 'Duration',
+      durationDays: '{{count}} days',
+      borrowedAt: 'Borrowed at',
+      returnedAt: 'Returned at',
       createdBy: 'Created by',
       updatedBy: 'Updated by',
       createdAt: 'Created at',

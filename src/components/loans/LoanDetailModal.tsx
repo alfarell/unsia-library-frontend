@@ -57,6 +57,21 @@ export function LoanDetailModal({ loan, onClose, open }: LoanDetailModalProps) {
           : t('loans.statusReturned'),
     },
     {
+      key: 'durationDays',
+      label: t('loans.detail.durationDaysLabel'),
+      value: t('loans.detail.durationDays', { count: loan.durationDays }),
+    },
+    {
+      key: 'borrowedAt',
+      label: t('loans.detail.borrowedAt'),
+      value: formatDate(loan.borrowedAt ?? loan.createdAt),
+    },
+    {
+      key: 'returnedAt',
+      label: t('loans.detail.returnedAt'),
+      value: loan.returnedAt ? formatDate(loan.returnedAt) : '—',
+    },
+    {
       key: 'createdBy',
       label: t('loans.detail.createdBy'),
       value: loan.createdBy?.name,

@@ -184,7 +184,9 @@ export function LoansPage() {
                         : t('loans.statusReturned')}
                     </span>
                   </td>
-                  <td className="px-4 py-3">{formatDate(loan.createdAt)}</td>
+                  <td className="px-4 py-3">
+                    {formatDate(loan.borrowedAt ?? loan.createdAt)}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       <button

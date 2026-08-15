@@ -71,14 +71,17 @@ export type LoanBook = {
 
 export type Loan = {
   books: (LoanBook | null)[]
+  borrowedAt: string
   createdAt: string
   createdBy: { id: string; name: string } | null
+  durationDays: number
   id: string
   member: {
     id: string
     membershipCode: string | null | undefined
     name: string
   } | null
+  returnedAt: string | null
   status: 'borrowed' | 'returned'
   updatedAt: string
   updatedBy: { id: string; name: string } | null
@@ -86,6 +89,7 @@ export type Loan = {
 
 export type LoanPayload = {
   bookIds: string[]
+  durationDays: number
   memberId: string
 }
 

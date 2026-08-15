@@ -159,6 +159,8 @@ export const id = {
       createTitle: 'Pinjam Buku',
       memberLabel: 'Anggota',
       memberPlaceholder: 'Pilih anggota',
+      durationDaysLabel: 'Durasi (hari)',
+      durationDaysPlaceholder: 'Contoh: 7',
       booksLabel: 'Pilih buku',
       bookAvailable: 'Tersisa {{count}} dari {{total}}',
       save: 'Simpan',
@@ -166,6 +168,8 @@ export const id = {
       validation: {
         memberRequired: 'Pilih anggota',
         booksRequired: 'Pilih minimal satu buku',
+        durationRequired: 'Masukkan durasi pinjam',
+        durationInvalid: 'Durasi harus 1–365 hari',
       },
     },
     return: {
@@ -181,6 +185,10 @@ export const id = {
       membershipCode: 'No. Anggota',
       books: 'Buku',
       status: 'Status',
+      durationDaysLabel: 'Durasi',
+      durationDays: '{{count}} hari',
+      borrowedAt: 'Dipinjam pada',
+      returnedAt: 'Dikembalikan pada',
       createdBy: 'Dibuat oleh',
       updatedBy: 'Diperbarui oleh',
       createdAt: 'Dibuat pada',
