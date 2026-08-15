@@ -6,6 +6,7 @@ import { ToastProvider } from './contexts/ToastContext'
 import { BooksPage } from './pages/BooksPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { LoginPage } from './pages/LoginPage'
+import { MembersPage } from './pages/MembersPage'
 import { RegisterPage } from './pages/RegisterPage'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/books" element={<BooksPage />} />
+                <Route path="/members" element={<MembersPage />} />
               </Route>
             </Route>
             <Route path="/login" element={<LoginPage />} />

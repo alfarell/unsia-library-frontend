@@ -39,6 +39,26 @@ export type BookPayload = {
   totalCopies?: number
 }
 
+export type Member = {
+  address: string | null | undefined
+  createdAt: string
+  createdBy: { id: string; name: string } | null
+  email: string
+  id: string
+  membershipCode: string | null | undefined
+  name: string
+  phone: string | null | undefined
+  updatedAt: string
+  updatedBy: { id: string; name: string } | null
+}
+
+export type MemberPayload = {
+  address?: string
+  email?: string
+  name?: string
+  phone?: string
+}
+
 type ApiErrorPayload = {
   code: string
   details?: unknown
@@ -186,6 +206,37 @@ export function updateBook(token: string, id: string, payload: BookPayload) {
 
 export function deleteBook(token: string, id: string) {
   return apiRequest<void>(`/api/books/${id}`, {
+    method: 'DELETE',
+    token,
+  })
+}
+
+export function listMembers(token: string) {
+  return apiRequest<{ members: Member[] }>('/api/members', { token })
+}
+
+export function createMember(token: string, payload: MemberPayload) {
+  return apiRequest<{ member: Member }>('/api/members', {
+    body: payload,
+    method: 'POST',
+    token,
+  })
+}
+
+export function updateMember(
+  token: string,
+  id: string,
+  payload: MemberPayload,
+) {
+  return apiRequest<{ member: Member }>(`/api/members/${id}`, {
+    body: payload,
+    method: 'PUT',
+    token,
+  })
+}
+
+export function deleteMember(token: string, id: string) {
+  return apiRequest<void>(`/api/members/${id}`, {
     method: 'DELETE',
     token,
   })

@@ -75,9 +75,9 @@ export function AppLayout() {
             <NavLink to="/books" className={navLinkClass}>
               {t('navigation.books')}
             </NavLink>
-            <button type="button" className={staticNavClass}>
+            <NavLink to="/members" className={navLinkClass}>
               {t('navigation.members')}
-            </button>
+            </NavLink>
             <button type="button" className={staticNavClass}>
               {t('navigation.loans')}
             </button>
