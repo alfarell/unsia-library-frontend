@@ -2,10 +2,21 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 import i18n from './i18n/config'
+import { setStoredAuth, setStoredUser } from './lib/storage'
 
 vi.mock('react-chartjs-2', () => ({
   Doughnut: () => <div data-testid="loan-chart" />,
 }))
+
+vi.mock('./lib/api', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./lib/api')>()
+  return {
+    ...actual,
+    getMe: vi.fn().mockResolvedValue({
+      user: { id: '1', name: 'Test User', email: 'test@example.com' },
+    }),
+  }
+})
 
 afterEach(() => {
   cleanup()
@@ -15,14 +26,19 @@ describe('App', () => {
   beforeEach(async () => {
     localStorage.clear()
     await i18n.changeLanguage('id')
-    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: false }))
+    setStoredAuth('test-token')
+    setStoredUser({
+      id: '1',
+      name: 'Test User',
+      email: 'test@example.com',
+    })
   })
 
-  it('renders the Indonesian dashboard by default', () => {
+  it('renders the Indonesian dashboard by default', async () => {
     render(<App />)
 
     expect(
-      screen.getByRole('heading', {
+      await screen.findByRole('heading', {
         name: 'Kelola perpustakaan dalam satu ruang kerja.',
       }),
     ).toBeInTheDocument()
@@ -32,7 +48,7 @@ describe('App', () => {
   it('switches the interface language', async () => {
     render(<App />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Ganti bahasa' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Ganti bahasa' }))
 
     expect(
       await screen.findByRole('heading', {
