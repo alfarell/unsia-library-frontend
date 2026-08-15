@@ -15,6 +15,7 @@ vi.mock('./lib/api', async (importOriginal) => {
     getMe: vi.fn().mockResolvedValue({
       user: { id: '1', name: 'Test User', email: 'test@example.com' },
     }),
+    listBooks: vi.fn().mockResolvedValue({ books: [] }),
   }
 })
 
@@ -67,5 +68,15 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Buka menu pengguna' }))
 
     expect(await screen.findByText('Test User')).toBeInTheDocument()
+  })
+
+  it('navigates to the books page via the sidebar link', async () => {
+    render(<App />)
+
+    fireEvent.click(await screen.findByRole('link', { name: 'Buku' }))
+
+    expect(
+      await screen.findByRole('heading', { name: 'Manajemen Buku' }),
+    ).toBeInTheDocument()
   })
 })

@@ -14,6 +14,31 @@ export type AuthResponse = {
   user: AuthUser
 }
 
+export type Book = {
+  author: string
+  category: string | null | undefined
+  createdAt: string
+  createdBy: { id: string; name: string } | null
+  id: string
+  isbn: string | null | undefined
+  publicationYear: number | null | undefined
+  publisher: string | null | undefined
+  title: string
+  totalCopies: number
+  updatedAt: string
+  updatedBy: { id: string; name: string } | null
+}
+
+export type BookPayload = {
+  author?: string
+  category?: string
+  isbn?: string
+  publicationYear?: number
+  publisher?: string
+  title?: string
+  totalCopies?: number
+}
+
 type ApiErrorPayload = {
   code: string
   details?: unknown
@@ -86,7 +111,13 @@ async function apiRequest<T>(
         : undefined,
     })
 
-    const payload = response.data as { data: T } | { error: ApiErrorPayload }
+    const body = response.data
+
+    if (body === null || body === undefined || body === '') {
+      return undefined as T
+    }
+
+    const payload = body as { data: T } | { error: ApiErrorPayload }
 
     if ('data' in payload) {
       return payload.data
@@ -131,4 +162,31 @@ export function login(payload: { email: string; password: string }) {
 
 export function getMe(token: string) {
   return apiRequest<{ user: AuthUser }>('/api/auth/me', { token })
+}
+
+export function listBooks(token: string) {
+  return apiRequest<{ books: Book[] }>('/api/books', { token })
+}
+
+export function createBook(token: string, payload: BookPayload) {
+  return apiRequest<{ book: Book }>('/api/books', {
+    body: payload,
+    method: 'POST',
+    token,
+  })
+}
+
+export function updateBook(token: string, id: string, payload: BookPayload) {
+  return apiRequest<{ book: Book }>(`/api/books/${id}`, {
+    body: payload,
+    method: 'PUT',
+    token,
+  })
+}
+
+export function deleteBook(token: string, id: string) {
+  return apiRequest<void>(`/api/books/${id}`, {
+    method: 'DELETE',
+    token,
+  })
 }
