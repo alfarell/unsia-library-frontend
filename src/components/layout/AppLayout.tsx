@@ -61,7 +61,7 @@ export function AppLayout() {
       </header>
 
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[220px_1fr] lg:px-8">
-        <aside className="min-w-0 border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <aside className="h-fit min-w-0 border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <nav
             aria-label={t('navigation.label')}
             className="flex gap-2 overflow-x-auto lg:flex-col"
