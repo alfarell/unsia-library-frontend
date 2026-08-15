@@ -7,6 +7,7 @@ import {
   createMember,
   deleteBook,
   deleteMember,
+  getDashboardSummary,
   getMe,
   listBooks,
   listLoans,
@@ -358,5 +359,43 @@ describe('apiRequest', () => {
       message: 'Stok buku tidak mencukupi',
       status: 400,
     })
+  })
+
+  it('fetches dashboard summary with the bearer token', async () => {
+    const dashboardData = {
+      summary: {
+        totalBooks: 1248,
+        activeMembers: 486,
+        activeLoans: 93,
+        overdueLoans: 7,
+      },
+      loanStatus: {
+        borrowed: 93,
+        returned: 176,
+        overdue: 7,
+      },
+      recentActivities: [
+        {
+          module: 'loans',
+          action: 'borrow',
+          description_id: 'Buku dipinjam oleh Budi Santoso',
+          description_en: 'A book was borrowed by Budi Santoso',
+          user: { name: 'Budi Santoso' },
+          createdAt: '2026-08-15T20:00:00.000Z',
+        },
+      ],
+    }
+    mockRequest.mockResolvedValue(response({ data: dashboardData }))
+
+    await expect(getDashboardSummary('token-123')).resolves.toEqual(
+      dashboardData,
+    )
+    expect(mockRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: { Authorization: 'Bearer token-123' },
+        method: 'GET',
+        url: '/api/dashboard/summary',
+      }),
+    )
   })
 })

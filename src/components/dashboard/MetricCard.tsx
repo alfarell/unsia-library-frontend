@@ -1,7 +1,7 @@
 type MetricCardProps = {
   label: string
   positive?: boolean
-  trend: string
+  trend?: string
   value: string
 }
 
@@ -18,15 +18,17 @@ export function MetricCard({
       </p>
       <div className="mt-3 flex items-end justify-between gap-4">
         <p className="text-3xl font-bold tracking-tight">{value}</p>
-        <span
-          className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-            positive
-              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-              : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'
-          }`}
-        >
-          {trend}
-        </span>
+        {trend && (
+          <span
+            className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+              positive
+                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+                : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'
+            }`}
+          >
+            {trend}
+          </span>
+        )}
       </div>
     </article>
   )

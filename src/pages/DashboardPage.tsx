@@ -1,11 +1,51 @@
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LoanStatusChart } from '../components/dashboard/LoanStatusChart'
 import { MetricCard } from '../components/dashboard/MetricCard'
 import { useTheme } from '../hooks/useTheme'
+import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
+import { getDashboardSummary, isApiError } from '../lib/api'
+import type { DashboardSummary } from '../lib/api'
 
 export function DashboardPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { theme } = useTheme()
+  const { token } = useAuth()
+  const { showToast } = useToast()
+
+  const [dashboard, setDashboard] = useState<DashboardSummary | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!token) return
+
+    let cancelled = false
+
+    getDashboardSummary(token)
+      .then((data) => {
+        if (!cancelled) {
+          setDashboard(data)
+        }
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          showToast(
+            isApiError(error) ? error.message : t('auth.errorUnexpected'),
+            'error',
+          )
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [token, showToast, t])
 
   return (
     <>
@@ -25,15 +65,30 @@ export function DashboardPage() {
         className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
         aria-label={t('metrics.label')}
       >
-        <MetricCard label={t('metrics.books')} value="1,248" trend="+24" />
-        <MetricCard label={t('metrics.members')} value="486" trend="+12" />
-        <MetricCard label={t('metrics.activeLoans')} value="93" trend="+8" />
-        <MetricCard
-          label={t('metrics.overdue')}
-          value="7"
-          trend="-3"
-          positive
-        />
+        {loading ? (
+          <div className="col-span-full py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+            {t('dashboard.loading')}
+          </div>
+        ) : (
+          <>
+            <MetricCard
+              label={t('metrics.books')}
+              value={dashboard?.summary.totalBooks.toLocaleString() ?? '—'}
+            />
+            <MetricCard
+              label={t('metrics.members')}
+              value={dashboard?.summary.activeMembers.toLocaleString() ?? '—'}
+            />
+            <MetricCard
+              label={t('metrics.activeLoans')}
+              value={dashboard?.summary.activeLoans.toLocaleString() ?? '—'}
+            />
+            <MetricCard
+              label={t('metrics.overdue')}
+              value={dashboard?.summary.overdueLoans.toLocaleString() ?? '—'}
+            />
+          </>
+        )}
       </section>
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
@@ -46,28 +101,55 @@ export function DashboardPage() {
               {t('chart.description')}
             </p>
           </div>
-          <LoanStatusChart theme={theme} />
+          <LoanStatusChart
+            theme={theme}
+            data={
+              dashboard?.loanStatus ?? { borrowed: 0, returned: 0, overdue: 0 }
+            }
+            loading={loading}
+          />
         </article>
 
         <article className="border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <h2 className="text-xl font-bold tracking-tight">
             {t('activity.title')}
           </h2>
-          <div className="mt-5 space-y-4">
-            {['loan', 'return', 'member'].map((item) => (
-              <div key={item} className="flex items-start gap-3">
-                <span className="mt-1 size-2.5 rounded-full bg-cyan-500" />
-                <div>
-                  <p className="text-sm font-semibold">
-                    {t(`activity.${item}.title`)}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                    {t(`activity.${item}.time`)}
-                  </p>
+          {loading ? (
+            <div className="mt-5 text-center text-sm text-slate-500 dark:text-slate-400">
+              {t('dashboard.loading')}
+            </div>
+          ) : dashboard?.recentActivities &&
+            dashboard.recentActivities.length > 0 ? (
+            <div className="mt-5 space-y-4">
+              {dashboard.recentActivities.map((activity, index) => (
+                <div
+                  key={`${activity.createdAt}-${index}`}
+                  className="flex items-start gap-3"
+                >
+                  <span className="mt-1 size-2.5 rounded-full bg-cyan-500" />
+                  <div>
+                    <p className="text-sm font-semibold">
+                      {i18n.language === 'id'
+                        ? activity.description_id
+                        : activity.description_en}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      {new Intl.DateTimeFormat(i18n.language, {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      }).format(new Date(activity.createdAt))}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-5 text-center text-sm text-slate-500 dark:text-slate-400">
+              {t('activity.empty')}
+            </div>
+          )}
         </article>
       </section>
     </>

@@ -294,3 +294,31 @@ export function returnLoan(token: string, id: string) {
     token,
   })
 }
+
+export type Activity = {
+  module: string
+  action: string
+  description_id: string
+  description_en: string
+  user: { name: string } | null
+  createdAt: string
+}
+
+export type DashboardSummary = {
+  summary: {
+    totalBooks: number
+    activeMembers: number
+    activeLoans: number
+    overdueLoans: number
+  }
+  loanStatus: {
+    borrowed: number
+    returned: number
+    overdue: number
+  }
+  recentActivities: Activity[]
+}
+
+export function getDashboardSummary(token: string) {
+  return apiRequest<DashboardSummary>('/api/dashboard/summary', { token })
+}

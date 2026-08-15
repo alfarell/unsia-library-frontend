@@ -200,6 +200,7 @@ export const en = {
     title: 'Manage the library in one workspace.',
     description:
       'Monitor collections, members, and loan activity through concise and easy-to-understand data.',
+    loading: 'Loading data...',
   },
   metrics: {
     label: 'Library statistics',
@@ -217,6 +218,7 @@ export const en = {
   },
   activity: {
     title: 'Recent activity',
+    empty: 'No recent activities',
     loan: {
       title: 'A book was borrowed by Budi Santoso',
       time: '5 minutes ago',

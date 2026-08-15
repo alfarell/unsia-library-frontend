@@ -12,17 +12,29 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 
 type LoanStatusChartProps = {
   theme: 'dark' | 'light'
+  data?: { borrowed: number; returned: number; overdue: number }
+  loading?: boolean
 }
 
-export function LoanStatusChart({ theme }: LoanStatusChartProps) {
+export function LoanStatusChart({
+  theme,
+  data,
+  loading,
+}: LoanStatusChartProps) {
   const { t } = useTranslation()
   const textColor = theme === 'dark' ? '#cbd5e1' : '#475569'
 
-  const data = {
+  const chartData = {
+    borrowed: data?.borrowed ?? 0,
+    returned: data?.returned ?? 0,
+    overdue: data?.overdue ?? 0,
+  }
+
+  const chartDataset = {
     labels: [t('chart.borrowed'), t('chart.returned'), t('chart.overdue')],
     datasets: [
       {
-        data: [93, 176, 7],
+        data: [chartData.borrowed, chartData.returned, chartData.overdue],
         backgroundColor: ['#0891b2', '#14b8a6', '#f97316'],
         borderColor: theme === 'dark' ? '#0f172a' : '#ffffff',
         borderWidth: 4,
@@ -46,7 +58,15 @@ export function LoanStatusChart({ theme }: LoanStatusChartProps) {
 
   return (
     <div className="h-72">
-      <Doughnut data={data} options={options} />
+      {loading ? (
+        <div className="flex items-center justify-center h-full">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            {t('dashboard.loading')}
+          </p>
+        </div>
+      ) : (
+        <Doughnut data={chartDataset} options={options} />
+      )}
     </div>
   )
 }

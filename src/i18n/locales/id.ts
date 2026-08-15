@@ -200,6 +200,7 @@ export const id = {
     title: 'Kelola perpustakaan dalam satu ruang kerja.',
     description:
       'Pantau koleksi, anggota, dan aktivitas peminjaman melalui data yang ringkas dan mudah dipahami.',
+    loading: 'Memuat data...',
   },
   metrics: {
     label: 'Statistik perpustakaan',
@@ -217,6 +218,7 @@ export const id = {
   },
   activity: {
     title: 'Aktivitas terbaru',
+    empty: 'Tidak ada aktivitas terbaru',
     loan: {
       title: 'Buku dipinjam oleh Budi Santoso',
       time: '5 menit lalu',

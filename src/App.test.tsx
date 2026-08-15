@@ -8,10 +8,28 @@ vi.mock('react-chartjs-2', () => ({
   Doughnut: () => <div data-testid="loan-chart" />,
 }))
 
+vi.mock('./components/dashboard/LoanStatusChart', () => ({
+  LoanStatusChart: () => <div data-testid="loan-chart" />,
+}))
+
 vi.mock('./lib/api', async (importOriginal) => {
   const actual = await importOriginal<typeof import('./lib/api')>()
   return {
     ...actual,
+    getDashboardSummary: vi.fn().mockResolvedValue({
+      summary: {
+        totalBooks: 1248,
+        activeMembers: 486,
+        activeLoans: 93,
+        overdueLoans: 7,
+      },
+      loanStatus: {
+        borrowed: 93,
+        returned: 176,
+        overdue: 7,
+      },
+      recentActivities: [],
+    }),
     getMe: vi.fn().mockResolvedValue({
       user: { id: '1', name: 'Test User', email: 'test@example.com' },
     }),
