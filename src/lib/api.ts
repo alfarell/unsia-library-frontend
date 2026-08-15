@@ -15,6 +15,7 @@ export type AuthResponse = {
 }
 
 export type Book = {
+  activeLoans?: number
   author: string
   category: string | null | undefined
   createdAt: string
@@ -57,6 +58,35 @@ export type MemberPayload = {
   email?: string
   name?: string
   phone?: string
+}
+
+export type LoanBook = {
+  activeLoans: number
+  author: string
+  id: string
+  isbn: string | null | undefined
+  title: string
+  totalCopies: number
+}
+
+export type Loan = {
+  books: (LoanBook | null)[]
+  createdAt: string
+  createdBy: { id: string; name: string } | null
+  id: string
+  member: {
+    id: string
+    membershipCode: string | null | undefined
+    name: string
+  } | null
+  status: 'borrowed' | 'returned'
+  updatedAt: string
+  updatedBy: { id: string; name: string } | null
+}
+
+export type LoanPayload = {
+  bookIds: string[]
+  memberId: string
 }
 
 type ApiErrorPayload = {
@@ -238,6 +268,25 @@ export function updateMember(
 export function deleteMember(token: string, id: string) {
   return apiRequest<void>(`/api/members/${id}`, {
     method: 'DELETE',
+    token,
+  })
+}
+
+export function listLoans(token: string) {
+  return apiRequest<{ loans: Loan[] }>('/api/loans', { token })
+}
+
+export function createLoan(token: string, payload: LoanPayload) {
+  return apiRequest<{ loan: Loan }>('/api/loans', {
+    body: payload,
+    method: 'POST',
+    token,
+  })
+}
+
+export function returnLoan(token: string, id: string) {
+  return apiRequest<{ loan: Loan }>(`/api/loans/${id}/return`, {
+    method: 'PUT',
     token,
   })
 }

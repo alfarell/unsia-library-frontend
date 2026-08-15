@@ -11,9 +11,6 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
   }`
 
-const staticNavClass =
-  'whitespace-nowrap rounded-[4px] px-4 py-3 text-left text-sm font-semibold transition text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
-
 export function AppLayout() {
   const { i18n, t } = useTranslation()
   const { theme, toggleTheme } = useTheme()
@@ -78,9 +75,9 @@ export function AppLayout() {
             <NavLink to="/members" className={navLinkClass}>
               {t('navigation.members')}
             </NavLink>
-            <button type="button" className={staticNavClass}>
+            <NavLink to="/loans" className={navLinkClass}>
               {t('navigation.loans')}
-            </button>
+            </NavLink>
           </nav>
         </aside>
 

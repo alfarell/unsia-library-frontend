@@ -16,6 +16,7 @@ vi.mock('./lib/api', async (importOriginal) => {
       user: { id: '1', name: 'Test User', email: 'test@example.com' },
     }),
     listBooks: vi.fn().mockResolvedValue({ books: [] }),
+    listLoans: vi.fn().mockResolvedValue({ loans: [] }),
     listMembers: vi.fn().mockResolvedValue({ members: [] }),
   }
 })
@@ -88,6 +89,16 @@ describe('App', () => {
 
     expect(
       await screen.findByRole('heading', { name: 'Manajemen Anggota' }),
+    ).toBeInTheDocument()
+  })
+
+  it('navigates to the loans page via the sidebar link', async () => {
+    render(<App />)
+
+    fireEvent.click(await screen.findByRole('link', { name: 'Peminjaman' }))
+
+    expect(
+      await screen.findByRole('heading', { name: 'Manajemen Peminjaman' }),
     ).toBeInTheDocument()
   })
 })
