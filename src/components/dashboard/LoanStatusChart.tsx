@@ -1,14 +1,33 @@
 import {
-  ArcElement,
+  BarElement,
+  CategoryScale,
   Chart as ChartJS,
-  Legend,
+  LinearScale,
   Tooltip,
   type ChartOptions,
 } from 'chart.js'
-import { Doughnut } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 import { useTranslation } from 'react-i18next'
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip)
+
+function calculateYAxisConfig(data: number[]) {
+  const maxValue = Math.max(...data, 0)
+
+  if (maxValue < 5) {
+    return {
+      max: 5,
+      stepSize: 1,
+      evenOnly: false,
+    }
+  } else {
+    return {
+      max: 10,
+      stepSize: 2,
+      evenOnly: true,
+    }
+  }
+}
 
 type LoanStatusChartProps = {
   theme: 'dark' | 'light'
@@ -34,23 +53,88 @@ export function LoanStatusChart({
     labels: [t('chart.borrowed'), t('chart.returned'), t('chart.overdue')],
     datasets: [
       {
+        label: 'Status Peminjaman',
         data: [chartData.borrowed, chartData.returned, chartData.overdue],
         backgroundColor: ['#0891b2', '#14b8a6', '#f97316'],
         borderColor: theme === 'dark' ? '#0f172a' : '#ffffff',
-        borderWidth: 4,
+        borderWidth: 1,
+        borderRadius: 4,
       },
     ],
   }
 
-  const options: ChartOptions<'doughnut'> = {
+  const yAxisConfig = calculateYAxisConfig([
+    chartData.borrowed,
+    chartData.returned,
+    chartData.overdue,
+  ])
+
+  const options: ChartOptions<'bar'> = {
     maintainAspectRatio: false,
+    responsive: true,
     plugins: {
       legend: {
-        position: 'bottom',
-        labels: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: theme === 'dark' ? '#1e293b' : '#f8fafc',
+        titleColor: textColor,
+        bodyColor: textColor,
+        borderColor: theme === 'dark' ? '#475569' : '#cbd5e1',
+        borderWidth: 1,
+        padding: 10,
+        displayColors: false,
+        callbacks: {
+          label: (context) => {
+            return String(context.parsed.y)
+          },
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: yAxisConfig.max,
+        grid: {
+          display: true,
+          color: theme === 'dark' ? '#334155' : '#e2e8f0',
+        },
+        ticks: {
+          stepSize: yAxisConfig.stepSize,
           color: textColor,
-          padding: 20,
-          usePointStyle: true,
+          font: {
+            size: 12,
+          },
+          callback: (value) => {
+            if (
+              yAxisConfig.evenOnly &&
+              typeof value === 'number' &&
+              value % 2 !== 0
+            ) {
+              return ''
+            }
+            return String(value)
+          },
+        },
+        title: {
+          display: true,
+          text: 'Jumlah',
+          color: textColor,
+          font: {
+            size: 13,
+            weight: 'bold',
+          },
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: textColor,
+          font: {
+            size: 12,
+          },
         },
       },
     },
@@ -65,7 +149,7 @@ export function LoanStatusChart({
           </p>
         </div>
       ) : (
-        <Doughnut data={chartDataset} options={options} />
+        <Bar data={chartDataset} options={options} />
       )}
     </div>
   )
