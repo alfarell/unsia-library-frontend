@@ -7,7 +7,7 @@ import { UserMenu } from '../ui/UserMenu'
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `whitespace-nowrap rounded-[4px] px-4 py-3 text-left text-sm font-semibold transition ${
     isActive
-      ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/20'
+      ? 'bg-cyan-600 text-white'
       : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
   }`
 
